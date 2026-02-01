@@ -1,0 +1,159 @@
+/* === ENCABEZADO === */
+.header {
+  height: 80px;
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+}
+
+/* === LOGO === */
+.logo img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  cursor: pointer;
+}
+
+/* === MENÚ PRINCIPAL === */
+.main-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  padding: 0;
+  margin: 0;
+}
+
+.main-nav ul li a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.main-nav ul li a:hover {
+  color: #ffd166;
+}
+
+/* === BOTÓN HAMBURGUESA === */
+.menu-icon {
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  display: none;
+  z-index: 1100;
+  transition: transform 0.3s;
+}
+
+.menu-icon:hover {
+  transform: scale(1.1);
+}
+
+/* CONTENEDOR IZQUIERDO */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.boton_regresar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.boton_regresar a {
+  color: white;
+  text-decoration: none;
+  font-size: 24px;
+  transition: 0.3s;
+}
+
+.boton_regresar a:hover {
+  color: #ffd166;
+  transform: scale(1.2);
+}
+
+/* RESPONSIVE */
+@media screen and (max-width: 768px) {
+  .menu-icon {
+    display: block;
+    z-index: 1200;
+  }
+
+  .main-nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    height: 100vh;
+    width: 70%;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: right 0.4s ease;
+    z-index: 1100;
+  }
+
+  .main-nav.open {
+    right: 0;
+  }
+
+  .main-nav ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  .main-nav ul li a {
+    color: white;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    padding: 10px 0;
+  }
+
+  .main-nav ul li a:hover {
+    background-color: #8b6b3f;
+    color: #fff;
+    transition: 0.3s ease;
+  }
+
+  .header {
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    z-index: 1200;
+  }
+
+  .header-left {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .boton_regresar {
+    display: none;
+  }
+
+  .logo img {
+    width: 120px;
+    height: 60px;
+  }
+}
