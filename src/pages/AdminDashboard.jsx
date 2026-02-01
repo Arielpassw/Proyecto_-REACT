@@ -382,6 +382,7 @@ const AdminDashboard = () => {
                 <option value="sopas">Sopas</option>
                 <option value="fuertes">Platos Fuertes</option>
                 <option value="parrilla">Parrilla</option>
+                <option value="rapida">Comida Rápida</option>
               </select>
 
               <input
@@ -506,6 +507,7 @@ const AdminDashboard = () => {
               <option value="sopas">Sopas</option>
               <option value="fuertes">Platos Fuertes</option>
               <option value="parrilla">Parrilla</option>
+              <option value="rapida">Comida Rápida</option>
             </select>
 
             <input
