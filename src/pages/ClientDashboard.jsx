@@ -8,7 +8,7 @@ import {
   doc,
 } from "firebase/firestore";
 import { signOut } from "firebase/auth";
-import { auth, db } from "../firebase";
+import { auth, db } from "../firebase/firebase";
 import "../styles/dashboard.css";
 
 const ClientDashboard = () => {
