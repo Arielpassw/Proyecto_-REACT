@@ -1,323 +1,241 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import "../styles/dashboard.css";
-
+import { useEffect, useState } from "react";
 import {
   collection,
   addDoc,
   getDocs,
-  query,
-  where,
-  updateDoc,
   deleteDoc,
+  updateDoc,
   doc,
 } from "firebase/firestore";
-import { db } from "../firebase/firebase";
+import { signOut } from "firebase/auth";
+import { auth, db } from "../firebase";
+import "../styles/dashboard.css";
 
 const ClientDashboard = () => {
-  const navigate = useNavigate();
-  const { loggedUser, logoutUser, updateUserProfile } = useAuth();
+  const [seccion, setSeccion] = useState("inicio");
+  const [reservas, setReservas] = useState([]);
+  const [editId, setEditId] = useState(null);
 
-  const [activeSection, setActiveSection] = useState("inicio");
-  const [orders, setOrders] = useState([]);
-  const [reservations, setReservations] = useState([]);
-  const [editingReservation, setEditingReservation] = useState(null);
-  const [editingProfile, setEditingProfile] = useState(false);
-
-  const [profileName, setProfileName] = useState("");
-  const [profileEmail, setProfileEmail] = useState("");
-
-  const [newReservation, setNewReservation] = useState({
+  const [form, setForm] = useState({
     fecha: "",
     hora: "",
-    personas: 1,
+    personas: "",
+    estado: "En proceso",
   });
 
-  const [message, setMessage] = useState(null);
+  const obtenerReservas = async () => {
+    const snap = await getDocs(collection(db, "reservas"));
+    setReservas(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+  };
 
-  /* =====================
-     CARGA INICIAL
-  ====================== */
   useEffect(() => {
-    if (!loggedUser) {
-      navigate("/login");
-      return;
+    obtenerReservas();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (editId) {
+      await updateDoc(doc(db, "reservas", editId), form);
+      setEditId(null);
+    } else {
+      await addDoc(collection(db, "reservas"), form);
     }
 
-    setProfileName(loggedUser.nombre);
-    setProfileEmail(loggedUser.email);
-
-    loadOrders();
-    loadReservations();
-  }, [loggedUser]);
-
-  /* =====================
-     PEDIDOS (READ)
-  ====================== */
-  const loadOrders = async () => {
-    const q = query(
-      collection(db, "pedidos"),
-      where("uid", "==", loggedUser.uid)
-    );
-    const snapshot = await getDocs(q);
-    setOrders(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
+    setForm({ fecha: "", hora: "", personas: "", estado: "En proceso" });
+    obtenerReservas();
   };
 
-  /* =====================
-     RESERVAS (CRUD)
-  ====================== */
-  const loadReservations = async () => {
-    const q = query(
-      collection(db, "reservas"),
-      where("uid", "==", loggedUser.uid)
-    );
-    const snapshot = await getDocs(q);
-    setReservations(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
+  const handleEdit = (r) => {
+    setEditId(r.id);
+    setForm(r);
   };
 
-  const handleAddReservation = async (e) => {
-    e.preventDefault();
-
-    await addDoc(collection(db, "reservas"), {
-      ...newReservation,
-      uid: loggedUser.uid,
-      estado: "pendiente",
-      createdAt: new Date(),
-    });
-
-    setMessage("Reserva creada correctamente");
-    setNewReservation({ fecha: "", hora: "", personas: 1 });
-    loadReservations();
-
-    setTimeout(() => setMessage(null), 3000);
-  };
-
-  const handleUpdateReservation = async (id) => {
-    await updateDoc(doc(db, "reservas", id), {
-      fecha: editingReservation.fecha,
-      hora: editingReservation.hora,
-      personas: editingReservation.personas,
-    });
-
-    setEditingReservation(null);
-    loadReservations();
-  };
-
-  const handleDeleteReservation = async (id) => {
-    if (!window.confirm("¿Eliminar esta reserva?")) return;
+  const handleDelete = async (id) => {
     await deleteDoc(doc(db, "reservas", id));
-    loadReservations();
-  };
-
-  /* =====================
-     PERFIL
-  ====================== */
-  const handleUpdateProfile = async (e) => {
-    e.preventDefault();
-
-    await updateUserProfile(profileName, profileEmail);
-    await updateDoc(doc(db, "users", loggedUser.uid), {
-      nombre: profileName,
-      email: profileEmail,
-    });
-
-    setEditingProfile(false);
+    obtenerReservas();
   };
 
   return (
     <div className="dashboard-layout">
       {/* SIDEBAR */}
       <aside className="sidebar">
-        <h2>Papu's Grill</h2>
+        <div>
+          <div className="sidebar-header">
+            <h2>Papu's</h2>
+            <p className="sidebar-subtitle">Panel Cliente</p>
+          </div>
 
-        {["inicio", "pedidos", "reservas", "perfil"].map((sec) => (
-          <button
-            key={sec}
-            className={activeSection === sec ? "active" : ""}
-            onClick={() => setActiveSection(sec)}
-          >
-            {sec.toUpperCase()}
-          </button>
-        ))}
+          <div className="sidebar-nav">
+            <button
+              className={`nav-link ${seccion === "inicio" ? "active" : ""}`}
+              onClick={() => setSeccion("inicio")}
+            >
+              Inicio
+            </button>
 
-        <button className="logout" onClick={() => {
-          logoutUser();
-          navigate("/");
-        }}>
+            <button
+              className={`nav-link ${seccion === "reservas" ? "active" : ""}`}
+              onClick={() => setSeccion("reservas")}
+            >
+              Reservas
+            </button>
+          </div>
+        </div>
+
+        <button className="btn-logout" onClick={() => signOut(auth)}>
           Cerrar sesión
         </button>
       </aside>
 
-      {/* CONTENIDO */}
+      {/* MAIN */}
       <main className="dashboard-main">
-        {activeSection === "inicio" && (
-          <>
-            <h2>Bienvenido, {loggedUser?.nombre}</h2>
-            <p>Pedidos: {orders.length}</p>
-            <p>Reservas: {reservations.length}</p>
-          </>
-        )}
+        {/* TOPBAR */}
+        <header className="topbar">
+          <h1>Dashboard</h1>
 
-        {activeSection === "pedidos" && (
-          <>
-            <h2>Mis pedidos</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Detalle</th>
-                  <th>Estado</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map((o) => (
-                  <tr key={o.id}>
-                    <td>{o.fecha}</td>
-                    <td>{o.detalle}</td>
-                    <td>{o.estado}</td>
-                    <td>${o.total}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
-        )}
-
-        {activeSection === "reservas" && (
-          <>
-            <h2>Reservas</h2>
-
-            {message && <div className="alert">{message}</div>}
-
-            <form onSubmit={handleAddReservation} className="form">
-              <input
-                type="date"
-                required
-                value={newReservation.fecha}
-                onChange={(e) =>
-                  setNewReservation({ ...newReservation, fecha: e.target.value })
-                }
-              />
-              <input
-                type="time"
-                required
-                value={newReservation.hora}
-                onChange={(e) =>
-                  setNewReservation({ ...newReservation, hora: e.target.value })
-                }
-              />
-              <input
-                type="number"
-                min="1"
-                value={newReservation.personas}
-                onChange={(e) =>
-                  setNewReservation({
-                    ...newReservation,
-                    personas: Number(e.target.value),
-                  })
-                }
-              />
-              <button type="submit">Crear reserva</button>
-            </form>
-
-            <div className="cards">
-              {reservations.map((r) => (
-                <div className="card" key={r.id}>
-                  {editingReservation?.id === r.id ? (
-                    <>
-                      <input
-                        type="date"
-                        value={editingReservation.fecha}
-                        onChange={(e) =>
-                          setEditingReservation({
-                            ...editingReservation,
-                            fecha: e.target.value,
-                          })
-                        }
-                      />
-                      <input
-                        type="time"
-                        value={editingReservation.hora}
-                        onChange={(e) =>
-                          setEditingReservation({
-                            ...editingReservation,
-                            hora: e.target.value,
-                          })
-                        }
-                      />
-                      <input
-                        type="number"
-                        value={editingReservation.personas}
-                        onChange={(e) =>
-                          setEditingReservation({
-                            ...editingReservation,
-                            personas: Number(e.target.value),
-                          })
-                        }
-                      />
-                      <button onClick={() => handleUpdateReservation(r.id)}>
-                        Guardar
-                      </button>
-                      <button onClick={() => setEditingReservation(null)}>
-                        Cancelar
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <p>{r.fecha}</p>
-                      <p>{r.hora}</p>
-                      <p>{r.personas} personas</p>
-                      <button onClick={() => setEditingReservation(r)}>
-                        Editar
-                      </button>
-                      <button onClick={() => handleDeleteReservation(r.id)}>
-                        Eliminar
-                      </button>
-                    </>
-                  )}
-                </div>
-              ))}
+          <div className="user-chip">
+            <i className="bx bx-user"></i>
+            <div className="user-chip-textos">
+              <span className="user-name">Cliente</span>
+              <span className="user-role">Usuario</span>
             </div>
-          </>
-        )}
+          </div>
+        </header>
 
-        {activeSection === "perfil" && (
-          <>
-            {!editingProfile ? (
-              <>
-                <p>Nombre: {loggedUser.nombre}</p>
-                <p>Email: {loggedUser.email}</p>
-                <button onClick={() => setEditingProfile(true)}>
-                  Editar perfil
-                </button>
-              </>
-            ) : (
-              <form onSubmit={handleUpdateProfile} className="form">
-                <input
-                  value={profileName}
-                  onChange={(e) => setProfileName(e.target.value)}
-                />
-                <input
-                  value={profileEmail}
-                  onChange={(e) => setProfileEmail(e.target.value)}
-                />
-                <button type="submit">Guardar</button>
-                <button
-                  type="button"
-                  onClick={() => setEditingProfile(false)}
-                >
-                  Cancelar
+        {/* CONTENT */}
+        <section className="dashboard-content">
+          {/* INICIO */}
+          <div className={`seccion ${seccion === "inicio" ? "activa" : ""}`}>
+            <div className="panel bienvenida-panel">
+              <div className="bienvenida-texto">
+                <h2>
+                  Bienvenido a <span>Papu's</span>
+                </h2>
+                <p>Desde aquí puedes gestionar tus reservas.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* RESERVAS */}
+          <div className={`seccion ${seccion === "reservas" ? "activa" : ""}`}>
+            <div className="panel">
+              <h3>{editId ? "Editar reserva" : "Nueva reserva"}</h3>
+
+              <form className="formulario-reserva" onSubmit={handleSubmit}>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Fecha</label>
+                    <input
+                      type="date"
+                      value={form.fecha}
+                      onChange={(e) =>
+                        setForm({ ...form, fecha: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Hora</label>
+                    <input
+                      type="time"
+                      value={form.hora}
+                      onChange={(e) =>
+                        setForm({ ...form, hora: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Personas</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={form.personas}
+                      onChange={(e) =>
+                        setForm({ ...form, personas: e.target.value })
+                      }
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Estado</label>
+                    <select
+                      value={form.estado}
+                      onChange={(e) =>
+                        setForm({ ...form, estado: e.target.value })
+                      }
+                    >
+                      <option>En proceso</option>
+                      <option>Entregado</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button className="btn-submit">
+                  {editId ? "Actualizar" : "Guardar"}
                 </button>
               </form>
-            )}
-          </>
-        )}
+
+              {/* TABLA */}
+              <div className="table-responsive">
+                <table className="tabla-dashboard">
+                  <thead>
+                    <tr>
+                      <th>Fecha</th>
+                      <th>Hora</th>
+                      <th>Personas</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {reservas.map((r) => (
+                      <tr key={r.id}>
+                        <td>{r.fecha}</td>
+                        <td>{r.hora}</td>
+                        <td>{r.personas}</td>
+                        <td>
+                          <span
+                            className={`badge-estado ${
+                              r.estado === "Entregado"
+                                ? "badge-entregado"
+                                : "badge-en-proceso"
+                            }`}
+                          >
+                            {r.estado}
+                          </span>
+                        </td>
+                        <td>
+                          <button
+                            className="btn-edit"
+                            onClick={() => handleEdit(r)}
+                          >
+                            Editar
+                          </button>
+                          <button
+                            className="btn-cancel"
+                            onClick={() => handleDelete(r.id)}
+                          >
+                            Eliminar
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   );
 };
 
 export default ClientDashboard;
+
 
