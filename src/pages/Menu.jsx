@@ -14,6 +14,7 @@ const Menu = () => {
     { id: "sopas", name: "Sopas" },
     { id: "fuertes", name: "Platos Fuertes" },
     { id: "parrilla", name: "Parrilla" },
+    { id: "rapida", name: "Comida Rápida" },
   ];
 
   useEffect(() => {
