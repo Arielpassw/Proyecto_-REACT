@@ -1,7 +1,7 @@
 /* === AUTH PAGE === */
 .auth-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #1f1b18;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -49,17 +49,16 @@
   align-items: center;
 }
 
+
 .auth-card {
-  background: white;
+   background: white;
   border-radius: 15px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  padding: 40px;
-  animation: slideIn 0.3s ease;
+  padding: 30px; 
   width: 100%;
-  max-width: 420px;
-  box-sizing: border-box;
-  max-height: calc(100vh - 160px); /* evita que exceda la altura de la ventana */
-  overflow: auto; /* scroll interno si es necesario */
+  max-width: 380px; 
+  height: auto; 
+  display: block; 
 }
 
 @keyframes slideIn {
