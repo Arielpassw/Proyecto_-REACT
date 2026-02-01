@@ -5,7 +5,8 @@ import '../styles/auth.css';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { loginUser, loginAdmin } = useAuth();
+  const { loginUser, loginAdmin, registerUser } = useAuth();
+
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,28 +15,29 @@ const Login = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const handleLogin = (e) => {
+  // ================= LOGIN =================
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
 
     try {
-      // Verificar si es admin
       if (email === 'admin@papus.com') {
-        loginAdmin(email, password);
+        await loginAdmin(email, password); // ✅ await
         setSuccess('¡Bienvenido Admin!');
         setTimeout(() => navigate('/admin'), 1500);
       } else {
-        loginUser(email, password);
+        await loginUser(email, password); // ✅ await
         setSuccess('¡Bienvenido!');
         setTimeout(() => navigate('/dashboard'), 1500);
       }
     } catch (err) {
-      setError(err.message);
+      setError('Correo o contraseña incorrectos.');
     }
   };
 
-  const handleRegister = (e) => {
+  // ================= REGISTRO =================
+  const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -51,11 +53,9 @@ const Login = () => {
     }
 
     try {
-      localStorage.setItem(
-        'registeredUser',
-        JSON.stringify({ nombre: fullname, email, password })
-      );
-      setSuccess('¡Cuenta creada correctamente! Redirigiendo al login...');
+      await registerUser(email, password); // 🔥 Firebase Auth
+      setSuccess('¡Cuenta creada correctamente! Ahora inicia sesión.');
+
       setTimeout(() => {
         setIsLogin(true);
         setEmail('');
@@ -77,6 +77,7 @@ const Login = () => {
       >
         <i className="fa-solid fa-arrow-left"></i> Volver
       </button>
+
       <div className="auth-container">
         <div className="auth-card">
           <div className="auth-header">
