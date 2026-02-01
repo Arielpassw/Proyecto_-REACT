@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import '../styles/header.css';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import "../styles/header.css";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -9,52 +9,65 @@ const Header = () => {
     setMenuOpen(!menuOpen);
   };
 
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
+  // Bloquea el scroll del cuerpo cuando el menú móvil está abierto
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [menuOpen]);
+
   return (
     <header className="header">
-      <input
-        type="checkbox"
-        id="menu-toggle"
-        checked={menuOpen}
-        onChange={toggleMenu}
-        style={{ display: 'none' }}
-      />
-      <label htmlFor="menu-toggle" className="menu-icon" onClick={toggleMenu}>
-        <i className="fa-solid fa-bars"></i>
-      </label>
-
       <div className="header-left">
-        <div className="logo">
-          <Link to="/">
-            <img src="/images/Papu's.png" alt="Papu's Logo" width="180" height="80" />
-          </Link>
-        </div>
+        <Link to="/" className="logo" onClick={closeMenu}>
+          <img src="/images/Papu's.png" alt="Papu's Logo" />
+        </Link>
       </div>
 
-      <nav className={`main-nav ${menuOpen ? 'open' : ''}`}>
+      {/* Icono de hamburguesa que cambia a X */}
+      <div className="menu-icon" onClick={toggleMenu}>
+        <i className={menuOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars"}></i>
+      </div>
+
+      {/* Navegación */}
+      <nav className={`main-nav ${menuOpen ? "open" : ""}`}>
         <ul>
           <li>
-            <Link to="/" onClick={() => setMenuOpen(false)}>Inicio</Link>
+            <Link to="/" onClick={closeMenu}>
+              Inicio
+            </Link>
           </li>
           <li>
-            <Link to="/about" onClick={() => setMenuOpen(false)}>Nosotros</Link>
+            <Link to="/about" onClick={closeMenu}>
+              Nosotros
+            </Link>
           </li>
           <li>
-            <Link to="/menu" onClick={() => setMenuOpen(false)}>Pedidos</Link>
+            <Link to="/menu" onClick={closeMenu}>
+              Pedidos
+            </Link>
           </li>
           <li>
-            <Link to="/reviews" onClick={() => setMenuOpen(false)}>Reseñas</Link>
+            <Link to="/reviews" onClick={closeMenu}>
+              Reseñas
+            </Link>
           </li>
           <li>
-            <Link to="/login" onClick={() => setMenuOpen(false)}>Registro</Link>
+            <Link to="/login" onClick={closeMenu}>
+              Registro
+            </Link>
           </li>
         </ul>
       </nav>
 
-      <div className="boton_regresar">
-        <Link to="/">
-          <i className="fa-solid fa-house"></i>
-        </Link>
-      </div>
+      {/* Overlay opcional para cerrar al hacer clic fuera */}
+      {menuOpen && <div className="menu-overlay" onClick={closeMenu}></div>}
     </header>
   );
 };
