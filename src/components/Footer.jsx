@@ -14,15 +14,20 @@ const Footer = () => {
             Sabor auténtico, carnes a la parrilla y la mejor experiencia gastronómica.
           </p>
           <div className="footer-social">
-            <a href="#facebook" aria-label="Facebook">
+            <a href="https://www.facebook.com/papusgrill/" aria-label="Facebook">
               <img src="/images/facebook.png" alt="Facebook" />
             </a>
-            <a href="#instagram" aria-label="Instagram">
+            <a href="https://www.instagram.com/papus_grill/" aria-label="Instagram">
               <img src="/images/instagram.png" alt="Instagram" />
             </a>
-            <a href="#twitter" aria-label="Twitter">
-              <img src="/images/twitter.png" alt="Twitter" />
+            <a
+              href="https://www.tiktok.com/@papus.grill"
+              aria-label="TikTok"
+              className="tiktok-icon"
+            >
+              <img src="/images/tiktok.png" alt="TikTok" />
             </a>
+
           </div>
         </div>
 
@@ -33,7 +38,7 @@ const Footer = () => {
             <li><a href="/">Inicio</a></li>
             <li><a href="/about">Nosotros</a></li>
             <li><a href="/menu">Pedidos</a></li>
-            <li><a href="#ubicacion">Ubicación</a></li>
+            <li><a href="https://maps.app.goo.gl/hRPdHMHn9MUfHH6e9">Ubicación</a></li>
           </ul>
         </div>
 
