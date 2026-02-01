@@ -1,0 +1,111 @@
+/* === ESTILOS BÁSICOS === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: rgb(249, 244, 236);
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+/* === FOOTER === */
+footer {
+  background-color: #1f1b18;
+  color: #d2b48c;
+  padding: 30px 0;
+  margin-top: auto;
+  width: 100%;
+}
+
+footer p {
+  text-align: center;
+  margin: 0;
+  padding: 15px 0;
+}
+
+/* === SECCIONES === */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* === BOTONES === */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-primary {
+  background-color: #c41e1e;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #a01a1a;
+}
+
+.btn-secondary {
+  background-color: #666;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #555;
+}
+
+.btn-danger {
+  background-color: #c41e1e;
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #a01a1a;
+}
+
+/* === ALERT === */
+.alert {
+  padding: 15px 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* === RESPONSIVE GENERAL === */
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 0 15px;
+  }
+}
