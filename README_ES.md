@@ -2,9 +2,9 @@
 
 Aplicación web totalmente funcional de Papu's Grill convertida a React con 100% de funcionalidad del proyecto original.
 
-##  Características
+## 🚀 Características
 
-###  Funcionalidades Implementadas
+### ✅ Funcionalidades Implementadas
 
 1. **Página de Inicio (Home)**
    - Carrusel automático de imágenes
@@ -81,7 +81,7 @@ npm start
 http://localhost:3000
 ```
 
-##  Dependencias Principales
+## 📦 Dependencias Principales
 
 - **React**: Framework de UI
 - **React Router DOM**: Enrutamiento de la aplicación
@@ -89,7 +89,7 @@ http://localhost:3000
 - **Bootswatch**: Tema Darkly para Bootstrap
 - **Font Awesome**: Iconos
 
-##  Uso de la Aplicación
+## 🎯 Uso de la Aplicación
 
 ### Para Clientes:
 
@@ -112,7 +112,7 @@ http://localhost:3000
    - Reseñas recibidas
    - Estadísticas generales
 
-##  Almacenamiento de Datos
+## 💾 Almacenamiento de Datos
 
 La aplicación utiliza **localStorage** para guardar:
 - Usuarios registrados
@@ -123,7 +123,7 @@ La aplicación utiliza **localStorage** para guardar:
 
 Esto significa que los datos persisten en el navegador incluso después de cerrar la aplicación.
 
-##  Estructura de Carpetas
+## 🎨 Estructura de Carpetas
 
 ```
 src/
@@ -153,14 +153,14 @@ src/
 └── App.js             # Aplicación principal
 ```
 
-##  Seguridad
+## 🔐 Seguridad
 
 - Gestión de sesiones con Context API
 - Protección de rutas (Dashboard requiere login)
 - Validación de formularios
 - Almacenamiento seguro de datos en localStorage
 
-##  Responsividad
+## 📱 Responsividad
 
 La aplicación es completamente responsive:
 
@@ -168,7 +168,7 @@ La aplicación es completamente responsive:
 - **Tablet**: Adaptación de espacios y tamaños
 - **Móvil**: Menú hamburguesa y interfaz optimizada
 
-##  Build para Producción
+## 🚀 Build para Producción
 
 Para crear una versión optimizada para producción:
 
@@ -192,22 +192,22 @@ Esto creará una carpeta `build/` lista para deployment.
 - Verifica que localStorage esté habilitado en tu navegador
 - Comprueba la consola del navegador para errores
 
-##  Notas Importantes
+## 📝 Notas Importantes
 
 - La aplicación es de demostración académica
 - Los datos se guardan en localStorage (cliente)
 - Para producción, se necesitaría un backend real
 - Las credenciales del admin son hardcodeadas (solo para demo)
 
-##  Contribuciones
+## 🤝 Contribuciones
 
 Este proyecto fue creado como una conversión completa del HTML/CSS/JS original a React.
 
-##  Licencia
+## 📄 Licencia
 
 © 2025 Papu's Grill. Todos los derechos reservados.
 
-##  Funcionalidades Futuras
+## ✨ Funcionalidades Futuras
 
 - Integración con backend real
 - Sistema de pagos
@@ -217,4 +217,4 @@ Este proyecto fue creado como una conversión completa del HTML/CSS/JS original 
 
 ---
 
-**¡Disfruta usando Papu's Grill en React!** 
+**¡Disfruta usando Papu's Grill en React!** 🍖
