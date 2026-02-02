@@ -67,7 +67,6 @@ const ClientDashboard = () => {
 
   return (
     <div className="dashboard-layout">
-      {/* SIDEBAR */}
       <aside className="sidebar">
         <div>
           <div className="sidebar-header">
