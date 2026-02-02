@@ -28,7 +28,7 @@ const ClientDashboard = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigate("/login"); // 3. Ahora esto sí funcionará
+      navigate("/login"); 
     } catch (error) {
       console.error("Error al cerrar sesión", error);
     }

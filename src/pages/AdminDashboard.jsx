@@ -169,25 +169,29 @@ const AdminDashboard = () => {
         {activeSection === "dashboard" && (
           <section className="admin-section">
             <div className="cards-grid">
-              <div className="card">
+              <div className="card"
+              onClick={() => setActiveSection("pedidos")}>
                 <i className="fa-solid fa-burger"></i>
                 <h3>Pedidos Hoy</h3>
                 <p className="card-number">{orders.length}</p>
               </div>
 
-              <div className="card">
+              <div className="card"
+              onClick={() => setActiveSection("reservas")}>
                 <i className="fa-solid fa-calendar-check"></i>
                 <h3>Reservas Hoy</h3>
                 <p className="card-number">{reservations.length}</p>
               </div>
 
-              <div className="card">
+              <div className="card"
+              onClick={() => setActiveSection("clientes")}>
                 <i className="fa-solid fa-users"></i>
                 <h3>Clientes Activos</h3>
                 <p className="card-number">5</p>
               </div>
 
-              <div className="card">
+              <div className="card" 
+              onClick={() => setActiveSection("resenas")}>
                 <i className="fa-solid fa-star"></i>
                 <h3>Nuevas Reseñas</h3>
                 <p className="card-number">{reviews.length}</p>
