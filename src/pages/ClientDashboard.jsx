@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // 1. Importado correctamente
 import {
   collection,
   addDoc,
@@ -8,10 +9,11 @@ import {
   doc,
 } from "firebase/firestore";
 import { signOut } from "firebase/auth";
-import { auth, db } from "../firebase";
+import { auth, db } from "../firebase/firebase";
 import "../styles/dashboard.css";
 
 const ClientDashboard = () => {
+  const navigate = useNavigate(); // 2. ¡ESTA LÍNEA FALTABA! Inicializa la navegación
   const [seccion, setSeccion] = useState("inicio");
   const [reservas, setReservas] = useState([]);
   const [editId, setEditId] = useState(null);
@@ -23,6 +25,16 @@ const ClientDashboard = () => {
     estado: "En proceso",
   });
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/login"); // 3. Ahora esto sí funcionará
+    } catch (error) {
+      console.error("Error al cerrar sesión", error);
+    }
+  };
+
+  // ... resto de tus funciones (obtenerReservas, handleSubmit, etc.) ...
   const obtenerReservas = async () => {
     const snap = await getDocs(collection(db, "reservas"));
     setReservas(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
@@ -34,14 +46,12 @@ const ClientDashboard = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (editId) {
       await updateDoc(doc(db, "reservas", editId), form);
       setEditId(null);
     } else {
       await addDoc(collection(db, "reservas"), form);
     }
-
     setForm({ fecha: "", hora: "", personas: "", estado: "En proceso" });
     obtenerReservas();
   };
@@ -83,17 +93,16 @@ const ClientDashboard = () => {
           </div>
         </div>
 
-        <button className="btn-logout" onClick={() => signOut(auth)}>
+        <button className="btn-logout" onClick={handleLogout}>
           Cerrar sesión
         </button>
       </aside>
 
-      {/* MAIN */}
+      {/* MAIN CONTENT (Igual que el tuyo) */}
       <main className="dashboard-main">
-        {/* TOPBAR */}
+        {/* ... (Tu código de la tabla y formularios se mantiene igual) ... */}
         <header className="topbar">
           <h1>Dashboard</h1>
-
           <div className="user-chip">
             <i className="bx bx-user"></i>
             <div className="user-chip-textos">
@@ -103,9 +112,7 @@ const ClientDashboard = () => {
           </div>
         </header>
 
-        {/* CONTENT */}
         <section className="dashboard-content">
-          {/* INICIO */}
           <div className={`seccion ${seccion === "inicio" ? "activa" : ""}`}>
             <div className="panel bienvenida-panel">
               <div className="bienvenida-texto">
@@ -117,11 +124,9 @@ const ClientDashboard = () => {
             </div>
           </div>
 
-          {/* RESERVAS */}
           <div className={`seccion ${seccion === "reservas" ? "activa" : ""}`}>
             <div className="panel">
               <h3>{editId ? "Editar reserva" : "Nueva reserva"}</h3>
-
               <form className="formulario-reserva" onSubmit={handleSubmit}>
                 <div className="form-row">
                   <div className="form-group">
@@ -135,7 +140,6 @@ const ClientDashboard = () => {
                       required
                     />
                   </div>
-
                   <div className="form-group">
                     <label>Hora</label>
                     <input
@@ -147,7 +151,6 @@ const ClientDashboard = () => {
                       required
                     />
                   </div>
-
                   <div className="form-group">
                     <label>Personas</label>
                     <input
@@ -160,7 +163,6 @@ const ClientDashboard = () => {
                       required
                     />
                   </div>
-
                   <div className="form-group">
                     <label>Estado</label>
                     <select
@@ -174,13 +176,11 @@ const ClientDashboard = () => {
                     </select>
                   </div>
                 </div>
-
                 <button className="btn-submit">
                   {editId ? "Actualizar" : "Guardar"}
                 </button>
               </form>
 
-              {/* TABLA */}
               <div className="table-responsive">
                 <table className="tabla-dashboard">
                   <thead>
@@ -200,11 +200,7 @@ const ClientDashboard = () => {
                         <td>{r.personas}</td>
                         <td>
                           <span
-                            className={`badge-estado ${
-                              r.estado === "Entregado"
-                                ? "badge-entregado"
-                                : "badge-en-proceso"
-                            }`}
+                            className={`badge-estado ${r.estado === "Entregado" ? "badge-entregado" : "badge-en-proceso"}`}
                           >
                             {r.estado}
                           </span>
@@ -237,5 +233,3 @@ const ClientDashboard = () => {
 };
 
 export default ClientDashboard;
-
-
