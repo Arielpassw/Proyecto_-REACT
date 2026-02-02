@@ -15,7 +15,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // ================= LOGIN =================
+  // LOGIN 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -23,11 +23,11 @@ const Login = () => {
 
     try {
       if (email === "admin@papus.com" && password === "admin123") {
-        await loginAdmin(email, password); // ✅ await
+        await loginAdmin(email, password); 
         setSuccess("¡Bienvenido Admin!");
         setTimeout(() => navigate("/admin"), 1500);
       } else {
-        await loginUser(email, password); // ✅ await
+        await loginUser(email, password); 
         setSuccess("¡Bienvenido!");
         setTimeout(() => navigate("/dashboard"), 1500);
       }
@@ -36,7 +36,7 @@ const Login = () => {
     }
   };
 
-  // ================= REGISTRO =================
+  //  REGISTRO 
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
@@ -53,7 +53,7 @@ const Login = () => {
     }
 
     try {
-      await registerUser(email, password); // 🔥 Firebase Auth
+      await registerUser(email, password); 
       setSuccess("¡Cuenta creada correctamente! Ahora inicia sesión.");
 
       setTimeout(() => {

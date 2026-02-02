@@ -59,7 +59,7 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* LÍNEA DIVISORIA Y COPYRIGHT */}
+      {/* LÍNEA DIVISORIA  */}
       <div className="footer-bottom">
         <p>&copy; 2025 Papu's Grill. Todos los derechos reservados.</p>
       </div>
