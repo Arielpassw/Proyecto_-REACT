@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // 1. Importado correctamente
+import { useNavigate } from "react-router-dom";
 import {
   collection,
   addDoc,
@@ -13,7 +13,7 @@ import { auth, db } from "../firebase/firebase";
 import "../styles/dashboard.css";
 
 const ClientDashboard = () => {
-  const navigate = useNavigate(); // 2. ¡ESTA LÍNEA FALTABA! Inicializa la navegación
+  const navigate = useNavigate(); 
   const [seccion, setSeccion] = useState("inicio");
   const [reservas, setReservas] = useState([]);
   const [editId, setEditId] = useState(null);
@@ -34,7 +34,6 @@ const ClientDashboard = () => {
     }
   };
 
-  // ... resto de tus funciones (obtenerReservas, handleSubmit, etc.) ...
   const obtenerReservas = async () => {
     const snap = await getDocs(collection(db, "reservas"));
     setReservas(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
@@ -98,9 +97,7 @@ const ClientDashboard = () => {
         </button>
       </aside>
 
-      {/* MAIN CONTENT (Igual que el tuyo) */}
       <main className="dashboard-main">
-        {/* ... (Tu código de la tabla y formularios se mantiene igual) ... */}
         <header className="topbar">
           <h1>Dashboard</h1>
           <div className="user-chip">
