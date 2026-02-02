@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // 1. Importado correctamente
+import { useNavigate } from "react-router-dom";
 import {
   collection,
   addDoc,
@@ -13,7 +13,7 @@ import { auth, db } from "../firebase/firebase";
 import "../styles/dashboard.css";
 
 const ClientDashboard = () => {
-  const navigate = useNavigate(); // 2. ¡ESTA LÍNEA FALTABA! Inicializa la navegación
+  const navigate = useNavigate();
   const [seccion, setSeccion] = useState("inicio");
   const [reservas, setReservas] = useState([]);
   const [editId, setEditId] = useState(null);
@@ -25,16 +25,6 @@ const ClientDashboard = () => {
     estado: "En proceso",
   });
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigate("/login"); // 3. Ahora esto sí funcionará
-    } catch (error) {
-      console.error("Error al cerrar sesión", error);
-    }
-  };
-
-  // ... resto de tus funciones (obtenerReservas, handleSubmit, etc.) ...
   const obtenerReservas = async () => {
     const snap = await getDocs(collection(db, "reservas"));
     setReservas(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
@@ -46,36 +36,67 @@ const ClientDashboard = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editId) {
-      await updateDoc(doc(db, "reservas", editId), form);
-      setEditId(null);
-    } else {
-      await addDoc(collection(db, "reservas"), form);
+    const usuarioActivo = auth.currentUser;
+
+    // Preparamos el objeto con los datos del form + datos del sistema
+    const datosReserva = {
+      ...form,
+      nombre: usuarioActivo?.displayName || usuarioActivo?.email || "Cliente",
+      sucursal: "Sucursal Principal", // Dato quemado que pediste
+      clienteId: usuarioActivo?.uid,
+    };
+
+    try {
+      if (editId) {
+        await updateDoc(doc(db, "reservas", editId), datosReserva);
+        setEditId(null);
+      } else {
+        await addDoc(collection(db, "reservas"), datosReserva);
+      }
+
+      // Limpiamos el formulario con los valores base
+      setForm({ fecha: "", hora: "", personas: "", estado: "En proceso" });
+      obtenerReservas();
+      alert("¡Reserva procesada!");
+    } catch (error) {
+      console.error("Error al guardar:", error);
     }
-    setForm({ fecha: "", hora: "", personas: "", estado: "En proceso" });
-    obtenerReservas();
   };
 
   const handleEdit = (r) => {
     setEditId(r.id);
-    setForm(r);
+    setForm({
+      fecha: r.fecha,
+      hora: r.hora,
+      personas: r.personas,
+      estado: r.estado,
+    });
   };
 
   const handleDelete = async (id) => {
-    await deleteDoc(doc(db, "reservas", id));
-    obtenerReservas();
+    if (window.confirm("¿Eliminar esta reserva?")) {
+      await deleteDoc(doc(db, "reservas", id));
+      obtenerReservas();
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      console.error("Error al cerrar sesión", error);
+    }
   };
 
   return (
     <div className="dashboard-layout">
-      {/* SIDEBAR */}
       <aside className="sidebar">
         <div>
           <div className="sidebar-header">
             <h2>Papu's</h2>
             <p className="sidebar-subtitle">Panel Cliente</p>
           </div>
-
           <div className="sidebar-nav">
             <button
               className={`nav-link ${seccion === "inicio" ? "active" : ""}`}
@@ -83,7 +104,6 @@ const ClientDashboard = () => {
             >
               Inicio
             </button>
-
             <button
               className={`nav-link ${seccion === "reservas" ? "active" : ""}`}
               onClick={() => setSeccion("reservas")}
@@ -92,22 +112,21 @@ const ClientDashboard = () => {
             </button>
           </div>
         </div>
-
         <button className="btn-logout" onClick={handleLogout}>
           Cerrar sesión
         </button>
       </aside>
 
-      {/* MAIN CONTENT (Igual que el tuyo) */}
       <main className="dashboard-main">
-        {/* ... (Tu código de la tabla y formularios se mantiene igual) ... */}
         <header className="topbar">
           <h1>Dashboard</h1>
           <div className="user-chip">
             <i className="bx bx-user"></i>
             <div className="user-chip-textos">
-              <span className="user-name">Cliente</span>
-              <span className="user-role">Usuario</span>
+              <span className="user-name">
+                {auth.currentUser?.email.split("@")[0]}
+              </span>
+              <span className="user-role">Cliente</span>
             </div>
           </div>
         </header>
@@ -119,7 +138,7 @@ const ClientDashboard = () => {
                 <h2>
                   Bienvenido a <span>Papu's</span>
                 </h2>
-                <p>Desde aquí puedes gestionar tus reservas.</p>
+                <p>Gestiona tus reservas de forma fácil.</p>
               </div>
             </div>
           </div>

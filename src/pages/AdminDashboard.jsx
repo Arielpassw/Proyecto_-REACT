@@ -25,6 +25,34 @@ const AdminDashboard = () => {
     imagen: "",
   });
 
+  // ---------------- FUNCIONES DE CARGA ----------------
+  const loadProductos = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "productos"));
+      const data = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setProductos(data);
+    } catch (error) {
+      console.error("Error cargando productos:", error);
+    }
+  };
+
+  const loadReservas = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "reservas"));
+      const data = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setReservations(data);
+    } catch (error) {
+      console.error("Error cargando reservas:", error);
+    }
+  };
+
+  // ---------------- FUNCIONES DE PRODUCTOS ----------------
   const handleCreateProducto = async (e) => {
     e.preventDefault();
 
@@ -61,20 +89,12 @@ const AdminDashboard = () => {
     }
   };
 
-  const loadProductos = async () => {
-    const querySnapshot = await getDocs(collection(db, "productos"));
-    const data = querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-    setProductos(data);
-  };
-
+  // ---------------- USEEFFECT PRINCIPAL ----------------
   useEffect(() => {
     if (!loggedUser || loggedUser.email !== "admin@papus.com") {
       navigate("/login");
     } else {
-      // Cargar datos
+      // Cargar pedidos simulados
       const savedOrders = [
         {
           id: 1,
@@ -99,12 +119,12 @@ const AdminDashboard = () => {
         },
       ];
       setOrders(savedOrders);
+
+      // Cargar productos y reservas
       loadProductos();
+      loadReservas();
 
-      const savedReservations =
-        JSON.parse(localStorage.getItem("reservasPapu")) || [];
-      setReservations(savedReservations);
-
+      // Cargar reseñas desde localStorage
       const savedReviews =
         JSON.parse(localStorage.getItem("reseñasPapu")) || [];
       setReviews(savedReviews);
@@ -116,6 +136,7 @@ const AdminDashboard = () => {
     navigate("/");
   };
 
+  // ---------------- RENDER ----------------
   return (
     <div className="admin-layout">
       {/* SIDEBAR */}
@@ -337,6 +358,7 @@ const AdminDashboard = () => {
           </section>
         )}
 
+        {/* PRODUCTOS */}
         {activeSection === "productos" && (
           <section className="admin-section">
             <h2>Gestión de Productos</h2>
@@ -432,6 +454,7 @@ const AdminDashboard = () => {
           </section>
         )}
 
+        {/* EDITAR PRODUCTO */}
         {productoEditando && (
           <form
             onSubmit={async (e) => {
